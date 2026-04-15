@@ -4,6 +4,9 @@ backend/.venv
 frontend/dist
 backend/dist
 backend/build
+frontend/*.d.ts
+frontend/*.js
+frontend/*.tsbuildinfo
 __pycache__
 .pytest_cache
 .mypy_cache
