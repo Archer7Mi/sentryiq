@@ -4,6 +4,7 @@
  */
 
 import { create } from 'zustand';
+import { client } from '../lib/api';
 
 // Types
 export interface SMBStack {
@@ -47,11 +48,15 @@ export interface DashboardStore {
 
   // Vulnerabilities
   vulnerabilities: Record<string, Vulnerability[]>; // keyed by stack_id
-  fetchVulnerabilities: (stackId: string) => void;
+  fetchVulnerabilities: (stackId: string) => Promise<void>;
 
   // Chains
   chains: Record<string, Chain[]>; // keyed by stack_id
-  fetchChains: (stackId: string) => void;
+  fetchChains: (stackId: string) => Promise<void>;
+
+  // AI Operations
+  synthesizeAlerts: (stackId: string) => Promise<void>;
+  analyzeChains: (stackId: string) => Promise<void>;
 
   // UI State
   isLoading: boolean;
@@ -60,7 +65,7 @@ export interface DashboardStore {
   setError: (error: string | null) => void;
 }
 
-export const useDashboardStore = create<DashboardStore>((set) => ({
+export const useDashboardStore = create<DashboardStore>((set, get) => ({
   // Navigation
   currentPage: 'dashboard',
   setCurrentPage: (page) => set({ currentPage: page }),
@@ -81,26 +86,67 @@ export const useDashboardStore = create<DashboardStore>((set) => ({
 
   // Vulnerabilities
   vulnerabilities: {},
-  fetchVulnerabilities: (stackId) => {
-    // Implementation: fetch from backend
-    set((state) => ({
-      vulnerabilities: {
-        ...state.vulnerabilities,
-        [stackId]: [],
-      },
-    }));
+  fetchVulnerabilities: async (stackId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await client.getAlerts(stackId);
+      set((state) => ({
+        vulnerabilities: {
+          ...state.vulnerabilities,
+          [stackId]: response.alerts,
+        },
+      }));
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to fetch vulnerabilities' });
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
   // Chains
   chains: {},
-  fetchChains: (stackId) => {
-    // Implementation: fetch from backend
-    set((state) => ({
-      chains: {
-        ...state.chains,
-        [stackId]: [],
-      },
-    }));
+  fetchChains: async (stackId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await client.getChains(stackId);
+      set((state) => ({
+        chains: {
+          ...state.chains,
+          [stackId]: response.chains,
+        },
+      }));
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to fetch chains' });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // AI Operations
+  synthesizeAlerts: async (stackId) => {
+    set({ isLoading: true, error: null });
+    try {
+      await client.synthesizeAlerts(stackId);
+      // Refresh vulnerabilities after synthesis
+      await get().fetchVulnerabilities(stackId);
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to synthesize alerts' });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  analyzeChains: async (stackId) => {
+    set({ isLoading: true, error: null });
+    try {
+      await client.analyzeChains(stackId);
+      // Refresh chains after analysis
+      await get().fetchChains(stackId);
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Failed to analyze chains' });
+    } finally {
+      set({ isLoading: false });
+    }
   },
 
   // UI State

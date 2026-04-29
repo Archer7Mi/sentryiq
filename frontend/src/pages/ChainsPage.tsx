@@ -2,6 +2,7 @@
  * Vulnerability chains visualization page.
  */
 
+import { useEffect } from 'react';
 import { useDashboardStore } from '../store/dashboard';
 
 const OUTCOME_ICONS = {
@@ -13,8 +14,15 @@ const OUTCOME_ICONS = {
 };
 
 export function ChainsPage() {
-  const { stacks, selectedStackId, setSelectedStack, chains } = useDashboardStore();
+  const { stacks, selectedStackId, setSelectedStack, chains, fetchChains, analyzeChains, isLoading, error } = useDashboardStore();
   const stackChains = selectedStackId ? chains[selectedStackId] || [] : [];
+
+  // Fetch chains when stack changes
+  useEffect(() => {
+    if (selectedStackId) {
+      fetchChains(selectedStackId);
+    }
+  }, [selectedStackId, fetchChains]);
 
   return (
     <main className="ml-64 mt-16 min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black p-8">
@@ -22,21 +30,38 @@ export function ChainsPage() {
         <h1 className="text-4xl font-bold text-white mb-2">Attack Chains</h1>
         <p className="text-slate-400 mb-8">Multi-hop vulnerability chains detected in your infrastructure</p>
 
+        {error && (
+          <div className="mb-6 p-4 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Stack Selector */}
         <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
           <label className="block text-sm font-medium text-white mb-3">Select Stack</label>
-          <select
-            value={selectedStackId || ''}
-            onChange={(e) => setSelectedStack(e.target.value || null)}
-            className="w-full max-w-md px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-white/30"
-          >
-            <option value="">-- Choose a stack --</option>
-            {stacks.map((stack) => (
-              <option key={stack.id} value={stack.id}>
-                {stack.org_name}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-4">
+            <select
+              value={selectedStackId || ''}
+              onChange={(e) => setSelectedStack(e.target.value || null)}
+              className="flex-1 px-4 py-2 rounded-lg bg-black/30 border border-white/10 text-white focus:outline-none focus:border-white/30"
+            >
+              <option value="">-- Choose a stack --</option>
+              {stacks.map((stack) => (
+                <option key={stack.id} value={stack.id}>
+                  {stack.org_name}
+                </option>
+              ))}
+            </select>
+            {selectedStackId && (
+              <button
+                onClick={() => analyzeChains(selectedStackId)}
+                disabled={isLoading}
+                className="px-6 py-2 rounded-lg bg-aurora-500 text-black font-medium hover:opacity-90 disabled:opacity-50 transition"
+              >
+                {isLoading ? 'Analyzing...' : '🧠 Analyze Chains'}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Chains */}
@@ -47,6 +72,7 @@ export function ChainsPage() {
         ) : stackChains.length === 0 ? (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl text-center">
             <p className="text-slate-400">No chains detected for this stack</p>
+            <p className="text-slate-500 text-sm mt-2">Click "Analyze Chains" to detect multi-hop vulnerability paths</p>
           </div>
         ) : (
           <div className="space-y-4">
