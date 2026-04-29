@@ -43,6 +43,13 @@ SentryIQ is the first unified, open-source platform to address both the **techni
 
 ## Quick Start
 
+### Prerequisites
+- Docker 20.10+
+- Docker Compose 2.0+
+- NVIDIA NIM API key (free at [build.nvidia.com](https://build.nvidia.com))
+
+### Option 1: Docker Compose (Recommended)
+
 ```bash
 # Clone the repository
 git clone https://github.com/Archer7Mi/sentryiq.git
@@ -50,15 +57,68 @@ cd sentryiq
 
 # Copy environment template
 cp .env.example .env
-# Add your NVIDIA NIM API key (free at build.nvidia.com)
 
-# Start with Docker
+# Edit .env and add your NVIDIA NIM API key
+# NVIDIA_API_KEY=your-api-key-here
+
+# Build and start all services
 docker compose up -d
 
-# Backend available at http://localhost:8000
-# Frontend available at http://localhost:3000
-# API docs at http://localhost:8000/docs
+# Wait for services to be healthy (~30s)
+docker compose ps
+
+# Access the platform
+# Frontend:    http://localhost
+# API:         http://localhost:8000
+# API Docs:    http://localhost:8000/docs
+# HealthCheck: http://localhost:8000/health
+
+# View logs
+docker compose logs -f api    # Backend logs
+docker compose logs -f frontend  # Frontend logs
+docker compose logs -f db     # Database logs
+
+# Stop all services
+docker compose down
+
+# Stop and remove all data
+docker compose down -v
 ```
+
+### Option 2: Local Development
+
+```bash
+# Backend setup
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -e ".[dev]"
+uvicorn sentryiq_api.main:app --reload
+
+# Frontend setup (in new terminal)
+cd frontend
+npm install
+npm run dev
+
+# Requires PostgreSQL and Redis running separately
+```
+
+### Docker Compose Services
+
+| Service | Port | Purpose |
+|---------|------|---------|
+| Frontend | 80 | React dashboard (nginx) |
+| API | 8000 | FastAPI backend |
+| Database | 5432 | PostgreSQL 16 |
+| Cache | 6379 | Redis 7 |
+
+### Environment Variables
+
+See `.env.example` for all options:
+- `DB_USER`, `DB_PASSWORD` — Database credentials
+- `NVIDIA_API_KEY` — Required for AI features
+- `ENVIRONMENT` — `development` or `production`
+- `DEBUG` — Enable debug logging
 
 ---
 
