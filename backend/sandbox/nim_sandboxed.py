@@ -9,10 +9,10 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from backend.ai.nim_client import NIMClient
-from backend.sandbox.monitor import get_monitor
-from backend.sandbox.nemoclaw import get_sandbox
-from backend.sandbox.policies import get_all_policies
+from ai.nim_client import NIMClient
+from sandbox.monitor import get_monitor
+from sandbox.nemoclaw import get_sandbox
+from sandbox.policies import get_all_policies
 
 logger = logging.getLogger(__name__)
 

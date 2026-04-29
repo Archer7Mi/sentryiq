@@ -10,10 +10,10 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.ai.nim_client import NIMClient
-from backend.database.connection import get_db_session
-from backend.simulation.phishing import PhishingSimulationEngine
-from backend.simulation.scoring import HumanRiskScorer
+from ai.nim_client import NIMClient
+from database.connection import get_db_session
+from simulation.phishing import PhishingSimulationEngine
+from simulation.scoring import HumanRiskScorer
 
 logger = logging.getLogger(__name__)
 

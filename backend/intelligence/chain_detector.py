@@ -11,7 +11,7 @@ from typing import Optional
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.database.models import CVERecord, SMBStack, StackVulnerability, VulnChain
+from database.models import CVERecord, SMBStack, StackVulnerability, VulnChain
 from data.cwe_graph.prerequisites import get_prerequisites
 
 logger = logging.getLogger(__name__)

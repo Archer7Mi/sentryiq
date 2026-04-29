@@ -10,20 +10,20 @@ import os
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.api.intelligence_routes import (
+from api.intelligence_routes import (
     init_nim_client,
     router as intelligence_router,
     shutdown_nim_client,
 )
-from backend.api.sandbox_routes import router as sandbox_router
-from backend.api.simulation_routes import (
+from api.sandbox_routes import router as sandbox_router
+from api.simulation_routes import (
     init_phishing_engine,
     init_risk_scorer,
     router as simulation_router,
 )
-from backend.database.connection import get_engine, init_db
-from backend.sandbox.nemoclaw import shutdown_sandbox
-from backend.sandbox.nim_sandboxed import (
+from database.connection import get_engine, init_db
+from sandbox.nemoclaw import shutdown_sandbox
+from sandbox.nim_sandboxed import (
     get_sandboxed_nim_client,
     shutdown_sandboxed_nim_client,
 )
@@ -60,8 +60,8 @@ async def startup_event():
         logger.info("Database initialized")
 
         # Initialize sandbox
-        from backend.sandbox.nemoclaw import get_sandbox
-        from backend.sandbox.policies import get_all_policies
+        from sandbox.nemoclaw import get_sandbox
+        from sandbox.policies import get_all_policies
 
         sandbox = await get_sandbox()
         policies = get_all_policies()
@@ -70,7 +70,7 @@ async def startup_event():
         logger.info("NemoClaw sandbox initialized with %d policies", len(policies))
 
         # Initialize NIM client
-        from backend.api.intelligence_routes import get_nim_client
+        from api.intelligence_routes import get_nim_client
         await init_nim_client()
         nim_client = get_nim_client()
         logger.info("NIM client initialized")
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
-        "backend.main:app",
+        "main:app",
         host="0.0.0.0",
         port=8000,
         reload=True,

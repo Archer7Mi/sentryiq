@@ -18,9 +18,9 @@ from tenacity import (
     wait_exponential,
 )
 
-from backend.database.connection import get_engine, async_session_factory
-from backend.database.models import CVERecord
-from backend.ingestion.config import config
+from database.connection import get_engine, async_session_factory
+from database.models import CVERecord
+from ingestion.config import config
 
 logger = logging.getLogger(__name__)
 

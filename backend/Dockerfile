@@ -31,14 +31,17 @@ COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/pytho
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy application code
-COPY src /app/src
+COPY . /app
+
+# Set Python path
+ENV PYTHONPATH=/app
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
 # Run FastAPI application
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
-CMD ["uvicorn", "sentryiq_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

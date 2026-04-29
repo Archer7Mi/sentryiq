@@ -7,7 +7,7 @@ Defines security policies for each agent type:
 - Ingestion workers
 """
 
-from backend.sandbox.nemoclaw import AgentCapability, SandboxLevel, SandboxPolicy
+from sandbox.nemoclaw import AgentCapability, SandboxLevel, SandboxPolicy
 
 
 # NIM AI Agent - CVE Synthesis

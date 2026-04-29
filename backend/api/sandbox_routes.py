@@ -10,8 +10,8 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from backend.sandbox.monitor import get_monitor
-from backend.sandbox.nemoclaw import get_sandbox
+from sandbox.monitor import get_monitor
+from sandbox.nemoclaw import get_sandbox
 
 logger = logging.getLogger(__name__)
 

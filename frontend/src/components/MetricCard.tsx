@@ -1,6 +1,6 @@
 type MetricCardProps = {
   label: string;
-  value: string;
+  value: string | number;
   detail: string;
 };
 

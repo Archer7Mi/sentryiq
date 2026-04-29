@@ -10,7 +10,7 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.database.models import (
+from database.models import (
     EmployeeRiskScore,
     SMBStack,
     StackVulnerability,

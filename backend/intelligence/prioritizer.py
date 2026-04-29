@@ -10,7 +10,7 @@ import logging
 from sqlalchemy import and_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.database.models import CVERecord, StackVulnerability, VulnChain
+from database.models import StackVulnerability, VulnChain
 
 logger = logging.getLogger(__name__)
 

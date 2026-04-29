@@ -10,7 +10,7 @@ from typing import Optional
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.database.models import CVERecord, SMBStack, StackVulnerability
+from database.models import CVERecord, SMBStack, StackVulnerability
 
 logger = logging.getLogger(__name__)
 

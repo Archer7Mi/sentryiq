@@ -1,0 +1,247 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # ============= BACKEND PYTHON =============
+  backend-lint:
+    name: Backend - Lint & Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black ruff mypy pytest pytest-asyncio
+
+      - name: Lint with ruff
+        run: |
+          ruff check backend/ --fix
+
+      - name: Format check with black
+        run: |
+          black backend/ --check
+
+      - name: Type check with mypy
+        run: |
+          mypy backend/ --ignore-missing-imports || true
+
+  backend-test:
+    name: Backend - Unit & Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sentryiq
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: sentryiq_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ./backend[dev]
+          pip install pytest pytest-asyncio pytest-cov
+
+      - name: Run tests with coverage
+        env:
+          DATABASE_URL: "postgresql+asyncpg://sentryiq:testpass@localhost:5432/sentryiq_test"
+          REDIS_URL: "redis://localhost:6379/0"
+          NVIDIA_API_KEY: "nvapi-test-key"
+        run: |
+          cd backend
+          pytest tests/ -v --cov=sentryiq_api --cov-report=xml --cov-report=term
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./backend/coverage.xml
+          fail_ci_if_error: false
+
+  # ============= FRONTEND TYPESCRIPT =============
+  frontend-lint:
+    name: Frontend - Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Lint with ESLint
+        run: |
+          cd frontend
+          npm run lint || true
+
+      - name: Type check with TypeScript
+        run: |
+          cd frontend
+          npx tsc --noEmit
+
+      - name: Build
+        run: |
+          cd frontend
+          npm run build
+
+  # ============= DOCKER BUILD =============
+  docker-build:
+    name: Docker - Build & Push Images
+    runs-on: ubuntu-latest
+    needs: [backend-lint, backend-test, frontend-lint]
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata - API
+        id: api-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/sentryiq-api
+            ghcr.io/${{ github.repository }}-api
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+
+      - name: Extract metadata - Frontend
+        id: frontend-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/sentryiq-frontend
+            ghcr.io/${{ github.repository }}-frontend
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.api-meta.outputs.tags }}
+          labels: ${{ steps.api-meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.frontend-meta.outputs.tags }}
+          labels: ${{ steps.frontend-meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ============= SECURITY SCANNING =============
+  security-scan:
+    name: Security - Dependency Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install safety
+        run: pip install safety
+
+      - name: Check Python dependencies for vulnerabilities
+        run: |
+          pip install -e ./backend
+          safety check || true
+
+  # ============= DEPLOYMENT NOTIFICATION =============
+  notify-deployment:
+    name: Notify - Deployment Status
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-lint, docker-build]
+    if: always()
+    steps:
+      - name: Determine status
+        run: |
+          if [ "${{ needs.backend-test.result }}" == "success" ] && \
+             [ "${{ needs.frontend-lint.result }}" == "success" ] && \
+             [ "${{ needs.docker-build.result }}" == "success" ]; then
+            echo "✅ All checks passed!"
+            exit 0
+          else
+            echo "❌ Some checks failed"
+            exit 1
+          fi

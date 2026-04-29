@@ -11,13 +11,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.ai.nim_client import NIMClient
-from backend.ai.schemas import (
+from ai.nim_client import NIMClient
+from ai.schemas import (
     StackVulnerabilityAlert,
     VulnerabilityChainAlert,
 )
-from backend.database.connection import get_db_session
-from backend.database.models import (
+from database.connection import get_db_session
+from database.models import (
     CVERecord,
     SMBStack,
     StackVulnerability,

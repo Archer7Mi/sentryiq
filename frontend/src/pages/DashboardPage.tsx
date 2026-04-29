@@ -3,7 +3,7 @@
  */
 
 import { useDashboardStore } from '../store/dashboard';
-import { MetricCard } from './MetricCard';
+import { MetricCard } from '../components/MetricCard';
 
 export function DashboardPage() {
   const { stacks, vulnerabilities, chains } = useDashboardStore();

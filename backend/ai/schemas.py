@@ -29,7 +29,7 @@ class CVESynthesisResponse(BaseModel):
     urgency: str = Field(
         ...,
         description="Priority level",
-        regex="^(Critical|High|Medium|Low)$",
+        pattern="^(Critical|High|Medium|Low)$",
     )
     """How urgent this CVE is for action (Critical/High/Medium/Low)."""
 
@@ -130,7 +130,7 @@ class StackVulnerabilityAlert(BaseModel):
     priority_label: str = Field(
         ...,
         description="Priority level",
-        regex="^(CRITICAL|HIGH|MEDIUM|LOW)$",
+        pattern="^(CRITICAL|HIGH|MEDIUM|LOW)$",
     )
     """SentryIQ priority label."""
 
@@ -176,7 +176,7 @@ class VulnerabilityChainAlert(BaseModel):
     attack_outcome: str = Field(
         ...,
         description="Expected outcome",
-        regex="^(RCE|PRIVESC|EXFIL|AUTH_BYPASS|CHAIN_ATTACK)$",
+        pattern="^(RCE|PRIVESC|EXFIL|AUTH_BYPASS|CHAIN_ATTACK)$",
     )
     """What the attacker gains if successful."""
 

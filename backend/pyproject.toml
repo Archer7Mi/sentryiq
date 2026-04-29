@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "sentryiq-api"
 version = "0.1.0"
 description = "FastAPI backend for the SentryIQ MVP"
-readme = "../README.md"
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.115,<1.0",
@@ -32,11 +31,10 @@ dev = [
   "types-setuptools>=69.0,<70.0"
 ]
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["backend*"]
+exclude = ["tests*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

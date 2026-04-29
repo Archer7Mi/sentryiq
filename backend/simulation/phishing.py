@@ -12,8 +12,8 @@ from typing import Optional
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.ai.nim_client import NIMClient
-from backend.database.models import (
+from ai.nim_client import NIMClient
+from database.models import (
     EmployeeRiskScore,
     SimulationCampaign,
     SMBStack,
