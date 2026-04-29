@@ -8,6 +8,7 @@ import { ChainsPage } from './pages/ChainsPage';
 import { CompliancePage } from './pages/CompliancePage';
 import { SimulationsPage } from './pages/SimulationsPage';
 import { HumanRiskPage } from './pages/HumanRiskPage';
+import { SandboxPage } from './pages/SandboxPage';
 
 function App() {
   const { currentPage } = useDashboardStore();
@@ -28,6 +29,8 @@ function App() {
         return <SimulationsPage />;
       case 'human-risk':
         return <HumanRiskPage />;
+      case 'sandbox':
+        return <SandboxPage />;
       default:
         return <DashboardPage />;
     }

@@ -332,12 +332,19 @@ nim_client = OpenAI(
   - HumanRiskPage: Organization & employee risk profiles with recommendations
   - Risk levels: LOW/MEDIUM/HIGH/CRITICAL
   - Dual-shield complete: Technical Shield (Phase 1-3) + Human Shield (Phase 5)
+- **Phase 6 Complete**: NemoClaw Agent Sandboxing
+  - NemoclawSandbox: Kernel-level isolation with policy enforcement
+  - Sandbox policies: 7 agent types with capability restrictions (NIM synthesis, chain analysis, phishing generation, workers)
+  - SandboxMonitor: Execution tracking, anomaly detection, health monitoring
+  - SandboxedNIMClient: Wraps NIM with sandbox boundaries and rate limiting
+  - FastAPI sandbox routes: /api/sandbox/* for status, health, anomalies, audit logs, policies
+  - SandboxPage: Real-time monitoring dashboard with agent health, anomaly tracking
+  - Integration: All AI operations now run within sandbox boundaries with audit logging
 
 ### 🔄 In Progress
 - None (awaiting user direction)
 
 ### ⏳ Not Started
-- Phase 6: NemoClaw agent sandboxing
 - Phase 7: Testing suite
 - Phase 8: Docker compose deployment
 - Advanced compliance reporting

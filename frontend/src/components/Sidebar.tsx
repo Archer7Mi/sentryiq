@@ -5,7 +5,7 @@
 import { useDashboardStore } from '../store/dashboard';
 
 export interface NavItem {
-  id: 'dashboard' | 'stacks' | 'vulnerabilities' | 'chains' | 'compliance' | 'simulations' | 'human-risk';
+  id: 'dashboard' | 'stacks' | 'vulnerabilities' | 'chains' | 'compliance' | 'simulations' | 'human-risk' | 'sandbox';
   label: string;
   icon: string;
 }
@@ -18,6 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'compliance', label: 'Compliance', icon: '✅' },
   { id: 'simulations', label: 'Simulations', icon: '📧' },
   { id: 'human-risk', label: 'Human Risk', icon: '👥' },
+  { id: 'sandbox', label: 'Sandbox', icon: '🔐' },
 ];
 
 export function Sidebar() {
@@ -48,8 +49,8 @@ export function Sidebar() {
       </nav>
 
       <div className="absolute bottom-6 left-6 right-6 p-4 rounded-lg bg-white/5 border border-white/10">
-        <p className="text-xs text-slate-400">Phase 5 Complete</p>
-        <p className="text-sm text-white font-medium mt-1">Human Shield Ready</p>
+        <p className="text-xs text-slate-400">Phase 6 Complete</p>
+        <p className="text-sm text-white font-medium mt-1">NemoClaw Sandboxing</p>
       </div>
     </aside>
   );
