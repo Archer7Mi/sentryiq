@@ -307,25 +307,21 @@ nim_client = OpenAI(
 - Chain detection algorithm design
 - NIM API integration pattern
 - Development environment (Python 3.14.2, Docker 29.1.3)
-- **Phase 1 Database Layer**: SQLAlchemy 2.0 async models (6 core tables)
-- **Phase 1 DB Connection**: Async engine with connection pooling
-- **Phase 1 Ingestion Config**: Environment-based settings (Pydantic)
-- **Phase 1 NVD Worker**: NVD API v2.0 polling (async, paginated, hourly)
-- **Phase 1 KEV Worker**: CISA KEV catalog sync (6-hourly)
-- **Phase 1 EPSS Worker**: FIRST EPSS score fetching (daily)
-- **Requirements.txt**: All Phase 1 dependencies pinned
-- **docker-compose.yml**: PostgreSQL 16 + Redis 7 configured
+- **Phase 1 Complete**: Data pipeline (NVD, KEV, EPSS workers)
+- **Phase 2 Stack Matching**: CPE-based CVE-to-stack matching
+- **Phase 2 Chain Detection**: CWE graph DFS traversal algorithm
+- **Phase 2 Prioritizer**: Composite scoring (CVSS + EPSS + KEV + chains)
+- **Phase 2 CWE Graph**: Prerequisite relationships data structure
 
 ### 🔄 In Progress
-- Phase 2: Stack matcher + chain detection engine
+- Phase 3: NIM AI integration + alert synthesis
 
 ### ⏳ Not Started
-- Stack fingerprinting wizard
-- CVE-to-stack matching implementation
-- Chain detection algorithm implementation
-- NIM AI integration (Claude API synthesis prompts)
+- Stack fingerprinting wizard API
+- NIM Claude prompt engineering
 - React dashboard
 - Phishing simulation engine
+- NemoClaw agent sandboxing
 - NemoClaw agent sandboxing
 
 ---

@@ -1,0 +1,1 @@
+"""CWE graph data module."""
