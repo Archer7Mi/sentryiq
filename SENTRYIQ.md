@@ -308,21 +308,23 @@ nim_client = OpenAI(
 - NIM API integration pattern
 - Development environment (Python 3.14.2, Docker 29.1.3)
 - **Phase 1 Complete**: Data pipeline (NVD, KEV, EPSS workers)
-- **Phase 2 Stack Matching**: CPE-based CVE-to-stack matching
-- **Phase 2 Chain Detection**: CWE graph DFS traversal algorithm
-- **Phase 2 Prioritizer**: Composite scoring (CVSS + EPSS + KEV + chains)
-- **Phase 2 CWE Graph**: Prerequisite relationships data structure
+- **Phase 2 Complete**: Intelligence engine (stack matcher, chain detector, prioritizer)
+- **Phase 2 CWE Graph**: Prerequisite relationships data structure (23 chains)
+- **Phase 3 Complete**: NIM AI integration
+  - NIM client wrapper (async httpx + OpenAI-compatible interface)
+  - Pydantic response schemas (CVE synthesis, chain analysis, phishing)
+  - FastAPI AI routes (POST /api/ai/vulnerabilities/{stack_id}/synthesize, POST /api/ai/chains/{stack_id}/analyze, GET endpoints for alerts/chains)
+  - Main FastAPI app with startup/shutdown hooks
 
 ### 🔄 In Progress
-- Phase 3: NIM AI integration + alert synthesis
+- Phase 4: React dashboard
 
 ### ⏳ Not Started
 - Stack fingerprinting wizard API
-- NIM Claude prompt engineering
-- React dashboard
-- Phishing simulation engine
+- Phishing simulation scheduling
 - NemoClaw agent sandboxing
-- NemoClaw agent sandboxing
+- Testing suite for Phase 3
+- Docker compose deployment
 
 ---
 
