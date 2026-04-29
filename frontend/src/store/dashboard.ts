@@ -36,7 +36,7 @@ export interface Chain {
 
 export interface DashboardStore {
   // Navigation
-  currentPage: 'dashboard' | 'stacks' | 'vulnerabilities' | 'chains' | 'compliance';
+  currentPage: 'dashboard' | 'stacks' | 'vulnerabilities' | 'chains' | 'compliance' | 'simulations' | 'human-risk';
   setCurrentPage: (page: DashboardStore['currentPage']) => void;
 
   // Stacks

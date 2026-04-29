@@ -324,17 +324,24 @@ nim_client = OpenAI(
   - Real-time data fetching with loading/error states
   - Generate Alerts button (synthesizes CVE summaries via NIM)
   - Analyze Chains button (detects and analyzes chains via NIM)
+- **Phase 5 Complete**: Phishing Simulation Engine & Human Risk Scoring
+  - PhishingSimulationEngine: Campaign creation, launch, click/report tracking
+  - HumanRiskScorer: Multi-component risk calculation (simulation behavior 40% + CVE exposure 30% + compliance awareness 30%)
+  - FastAPI simulation routes: /api/simulations/campaigns (create, launch, stats), /api/simulations/interactions (click, report), /api/simulations/risk (employee, organization)
+  - SimulationsPage: Campaign management with NIM email generation
+  - HumanRiskPage: Organization & employee risk profiles with recommendations
+  - Risk levels: LOW/MEDIUM/HIGH/CRITICAL
+  - Dual-shield complete: Technical Shield (Phase 1-3) + Human Shield (Phase 5)
 
 ### 🔄 In Progress
 - None (awaiting user direction)
 
 ### ⏳ Not Started
-- Phase 5: Phishing simulation engine & scheduling
 - Phase 6: NemoClaw agent sandboxing
 - Phase 7: Testing suite
 - Phase 8: Docker compose deployment
-- Stack fingerprinting wizard API
 - Advanced compliance reporting
+- APScheduler integration for campaign scheduling
 
 ---
 

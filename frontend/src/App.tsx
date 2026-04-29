@@ -6,6 +6,8 @@ import { StacksPage } from './pages/StacksPage';
 import { VulnerabilitiesPage } from './pages/VulnerabilitiesPage';
 import { ChainsPage } from './pages/ChainsPage';
 import { CompliancePage } from './pages/CompliancePage';
+import { SimulationsPage } from './pages/SimulationsPage';
+import { HumanRiskPage } from './pages/HumanRiskPage';
 
 function App() {
   const { currentPage } = useDashboardStore();
@@ -22,6 +24,10 @@ function App() {
         return <ChainsPage />;
       case 'compliance':
         return <CompliancePage />;
+      case 'simulations':
+        return <SimulationsPage />;
+      case 'human-risk':
+        return <HumanRiskPage />;
       default:
         return <DashboardPage />;
     }

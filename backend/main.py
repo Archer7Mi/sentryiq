@@ -15,6 +15,11 @@ from backend.api.intelligence_routes import (
     router as intelligence_router,
     shutdown_nim_client,
 )
+from backend.api.simulation_routes import (
+    init_phishing_engine,
+    init_risk_scorer,
+    router as simulation_router,
+)
 from backend.database.connection import get_engine, init_db
 
 # Configure logging
@@ -33,6 +38,7 @@ app = FastAPI(
 
 # Include routers
 app.include_router(intelligence_router)
+app.include_router(simulation_router)
 
 
 @app.on_event("startup")
@@ -47,8 +53,18 @@ async def startup_event():
         logger.info("Database initialized")
 
         # Initialize NIM client
+        from backend.api.intelligence_routes import get_nim_client
         await init_nim_client()
+        nim_client = get_nim_client()
         logger.info("NIM client initialized")
+
+        # Initialize phishing engine
+        await init_phishing_engine(nim_client)
+        logger.info("Phishing engine initialized")
+
+        # Initialize risk scorer
+        await init_risk_scorer()
+        logger.info("Risk scorer initialized")
 
     except Exception as e:
         logger.error(f"Startup failed: {e}")
