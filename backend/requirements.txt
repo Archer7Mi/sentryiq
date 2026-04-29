@@ -10,3 +10,5 @@ apscheduler==3.10.4
 httpx==0.25.2
 tenacity==8.2.3
 pydantic-core==2.14.1
+pytz==2024.1
+aioredis==2.0.1
