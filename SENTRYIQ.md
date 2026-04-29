@@ -315,16 +315,26 @@ nim_client = OpenAI(
   - Pydantic response schemas (CVE synthesis, chain analysis, phishing)
   - FastAPI AI routes (POST /api/ai/vulnerabilities/{stack_id}/synthesize, POST /api/ai/chains/{stack_id}/analyze, GET endpoints for alerts/chains)
   - Main FastAPI app with startup/shutdown hooks
+- **Phase 4 Complete**: React Dashboard
+  - Zustand store for state management (stacks, vulnerabilities, chains, UI)
+  - Sidebar navigation (Dashboard, Stacks, Alerts, Chains, Compliance)
+  - 5 main pages: Dashboard overview, Stack registry, Vulnerabilities, Chains, Compliance mapping
+  - Stack registration wizard with CPE and framework inputs
+  - API client (SentryIQClient) for backend communication
+  - Real-time data fetching with loading/error states
+  - Generate Alerts button (synthesizes CVE summaries via NIM)
+  - Analyze Chains button (detects and analyzes chains via NIM)
 
 ### 🔄 In Progress
-- Phase 4: React dashboard
+- None (awaiting user direction)
 
 ### ⏳ Not Started
+- Phase 5: Phishing simulation engine & scheduling
+- Phase 6: NemoClaw agent sandboxing
+- Phase 7: Testing suite
+- Phase 8: Docker compose deployment
 - Stack fingerprinting wizard API
-- Phishing simulation scheduling
-- NemoClaw agent sandboxing
-- Testing suite for Phase 3
-- Docker compose deployment
+- Advanced compliance reporting
 
 ---
 
